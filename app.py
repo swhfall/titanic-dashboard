@@ -105,31 +105,27 @@ fig3.update_layout(
 st.plotly_chart(fig3, use_container_width=True)
 
 # График: Пузырьковая диаграмма стоимости
-st.subheader("🫧 Стоимость билета: цена vs класс vs размер семьи")
+# График: Распределение стоимости билета по классам
+st.subheader("📊 Распределение стоимости билета по классам")
 
-bubble_fare = df.dropna(subset=['Fare']).copy()
-bubble_fare['Размер семьи'] = bubble_fare['SibSp'] + bubble_fare['Parch'] + 1
-bubble_fare['Статус'] = bubble_fare['Survived'].map({0: 'Погиб', 1: 'Выжил'})
-
-fig_fare = px.scatter(
-    bubble_fare,
-    x='Pclass',
-    y='Fare',
-    size='Размер семьи',
-    color='Статус',
-    hover_name='Name',
-    title='Стоимость билета: класс, цена и размер семьи',
-    labels={'Pclass': 'Класс каюты', 'Fare': 'Стоимость ($)', 'Размер семьи': 'Размер семьи'},
-    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'},
-    size_max=40,
-    opacity=0.7
+fig_fare = px.histogram(
+    df,
+    x='Fare',
+    color='Pclass',
+    nbins=50,
+    title='Распределение стоимости билета по классам',
+    labels={'Fare': 'Стоимость билета ($)', 'count': 'Количество пассажиров', 'Pclass': 'Класс'},
+    barmode='overlay',
+    opacity=0.7,
+    color_discrete_sequence=['#E74C3C', '#3498DB', '#2ECC71']
 )
 fig_fare.update_layout(
     title_font_size=18,
-    title_x=0.5
+    title_x=0.5,
+    xaxis_range=[0, 200]  # показываем до 200$, убираем выбросы
 )
 st.plotly_chart(fig_fare, use_container_width=True)
-
+st.caption("💡 **Видно, что 1 класс — самые дорогие билеты, 3 класс — самые дешевые.")
 # График 5: Линейчатая диаграмма - выживаемость по полу
 st.subheader("5. Выживаемость по полу")
 gender_survival = df.groupby('Sex')['Survived'].mean() * 100
