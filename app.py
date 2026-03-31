@@ -40,24 +40,17 @@ with col2:
 
 st.header("Визуализация данных")
 
-st.subheader("Иерархия выживаемости (Солнечная диаграмма)")
-df_sunburst = df.copy()
-df_sunburst['Статус'] = df_sunburst['Survived'].map({0: 'Погиб', 1: 'Выжил'})
-df_sunburst['Пол'] = df_sunburst['Sex'].map({'male': 'Мужской', 'female': 'Женский'})
-fig_sunburst = px.sunburst(
-    df_sunburst,
-    path=['Pclass', 'Пол', 'Статус'],
-    title='Солнечная диаграмма: Класс → Пол → Выживаемость',
-    color='Survived',
-    color_continuous_scale='RdYlGn',
-    width=800,
-    height=600
+# График 1: Круговая диаграмма - выживаемость
+st.subheader("1. Выживаемость пассажиров")
+survived_counts = df['Survived'].value_counts()
+fig1 = px.pie(
+    values=survived_counts.values, 
+    names=['Погиб', 'Выжил'],
+    title='Соотношение выживших и погибших',
+    color_discrete_sequence=['#E74C3C', '#2ECC71']
 )
-fig_sunburst.update_layout(
-    title_font_size=20,
-    title_x=0.5
-)
-st.plotly_chart(fig_sunburst, use_container_width=True)
+st.plotly_chart(fig1, use_container_width=True)
+    
 
 # График 2: Гистограмма - возраст
 st.subheader("2. Распределение возраста")
