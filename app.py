@@ -38,18 +38,26 @@ with col2:
         st.write(f"**{pclass} класс:** {count} пассажиров ({count/len(df)*100:.1f}%)")
 
 
-st.header("📈 Визуализация данных")
+st.header("Визуализация данных")
 
-# График 1: Круговая диаграмма - выживаемость
-st.subheader("1. Выживаемость пассажиров")
-survived_counts = df['Survived'].value_counts()
-fig1 = px.pie(
-    values=survived_counts.values, 
-    names=['Погиб', 'Выжил'],
-    title='Соотношение выживших и погибших',
-    color_discrete_sequence=["#8F1A0D","#155630"]
+st.subheader("Иерархия выживаемости (Солнечная диаграмма)")
+df_sunburst = df.copy()
+df_sunburst['Статус'] = df_sunburst['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+df_sunburst['Пол'] = df_sunburst['Sex'].map({'male': 'Мужской', 'female': 'Женский'})
+fig_sunburst = px.sunburst(
+    df_sunburst,
+    path=['Pclass', 'Пол', 'Статус'],
+    title='Солнечная диаграмма: Класс → Пол → Выживаемость',
+    color='Survived',
+    color_continuous_scale='RdYlGn',
+    width=800,
+    height=600
 )
-st.plotly_chart(fig1, use_container_width=True)
+fig_sunburst.update_layout(
+    title_font_size=20,
+    title_x=0.5
+)
+st.plotly_chart(fig_sunburst, use_container_width=True)
 
 # График 2: Гистограмма - возраст
 st.subheader("2. Распределение возраста")
