@@ -54,35 +54,31 @@ st.plotly_chart(fig1, use_container_width=True)
 
 # График 2: Гистограмма - возраст
 # График 2: Диаграмма с областями - распределение по возрастам
-st.subheader("📊 2. Диаграмма с областями: Возрастные группы")
+# График 2: Тепловая карта - возраст vs класс
+st.subheader("🔥 2. Тепловая карта: Возраст по классам")
 
-# Создаем возрастные группы
-df_age = df.dropna(subset=['Age']).copy()
-df_age['Возрастная группа'] = pd.cut(
-    df_age['Age'], 
-    bins=[0, 12, 18, 35, 60, 100],
-    labels=['Дети (0-12)', 'Подростки (13-18)', 'Взрослые (19-35)', 
-            'Средний возраст (36-60)', 'Пожилые (60+)']
+# Создаем сводную таблицу
+age_pivot = df.pivot_table(
+    values='PassengerId', 
+    index=pd.cut(df['Age'], bins=10), 
+    columns='Pclass', 
+    aggfunc='count',
+    fill_value=0
 )
+age_pivot.index = [f"{int(i.left)}-{int(i.right)}" for i in age_pivot.index]
 
-# Считаем количество
-age_dist = df_age.groupby(['Возрастная группа', 'Survived']).size().reset_index(name='count')
-age_dist['Survived'] = age_dist['Survived'].map({0: 'Погиб', 1: 'Выжил'})
-
-fig2 = px.area(
-    age_dist,
-    x='Возрастная группа',
-    y='count',
-    color='Survived',
-    title='Распределение пассажиров по возрастным группам',
-    labels={'count': 'Количество пассажиров', 'Возрастная группа': ''},
-    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'},
-    groupnorm='fraction'
+fig2 = px.imshow(
+    age_pivot,
+    text_auto=True,
+    aspect='auto',
+    title='Тепловая карта: Количество пассажиров по возрастам и классам',
+    labels=dict(x='Класс каюты', y='Возрастная группа', color='Количество'),
+    color_continuous_scale='Viridis'
 )
 fig2.update_layout(
     title_font_size=18,
     title_x=0.5,
-    xaxis_tickangle=-45
+    height=500
 )
 st.plotly_chart(fig2, use_container_width=True)
 
