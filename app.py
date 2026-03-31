@@ -52,8 +52,6 @@ fig1 = px.pie(
 st.plotly_chart(fig1, use_container_width=True)
     
 
-# График 2: Гистограмма - возраст
-# График 2: Диаграмма с областями - распределение по возрастам
 # График 2: Тепловая карта - возраст vs класс
 st.subheader("🔥 2. Тепловая карта: Возраст по классам")
 
@@ -82,20 +80,27 @@ fig2.update_layout(
 )
 st.plotly_chart(fig2, use_container_width=True)
 
-# График 3: Столбчатая диаграмма - классы
-st.subheader("3. Количество пассажиров по классам")
-class_counts = df['Pclass'].value_counts().sort_index()
-fig3 = px.bar(
-    x=class_counts.index, 
-    y=class_counts.values,
-    title='Количество пассажиров по классам',
-    labels={'x': 'Класс каюты', 'y': 'Количество'},
-    color=class_counts.index,
-    text=class_counts.values
-)
-fig3.update_traces(textposition='outside')
-st.plotly_chart(fig3, use_container_width=True)
+# График 3: Скрипичный график - стоимость билета по классам
+st.subheader("🎻 3. Скрипичный график: Стоимость билета по классам")
 
+fig3 = px.violin(
+    df,
+    x='Pclass',
+    y='Fare',
+    color='Pclass',
+    box=True,
+    points='all',
+    title='Скрипичный график: Распределение стоимости билета по классам',
+    labels={'Pclass': 'Класс каюты', 'Fare': 'Стоимость билета ($)'},
+    color_continuous_scale='Viridis'
+)
+fig3.update_layout(
+    title_font_size=18,
+    title_x=0.5,
+    showlegend=False
+)
+st.plotly_chart(fig3, use_container_width=True)
+st.caption("💡 **Пояснение:** Ширина показывает плотность распределения. Чем шире, тем больше пассажиров с такой стоимостью билета.")
 # График 4: Ящик с усами - стоимость билета
 st.subheader("4. Стоимость билета по классам")
 fig4 = px.box(
