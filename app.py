@@ -122,21 +122,18 @@ fig4.update_layout(
 )
 st.plotly_chart(fig4, use_container_width=True)
 
-
-# График 5: Иерархическая диаграмма
-st.subheader("🌞 5. Иерархия: Класс → Пол → Выживаемость")
-
+# График 5 Иерархическая диаграмма
+st.subheader("5. Иерархия: класс, пол, выживаемость")
 df_hierarchy = df.copy()
 df_hierarchy['Статус'] = df_hierarchy['Survived'].map({0: 'Погиб', 1: 'Выжил'})
 df_hierarchy['Пол'] = df_hierarchy['Sex'].map({'male': 'Мужской', 'female': 'Женский'})
 df_hierarchy['Класс'] = df_hierarchy['Pclass'].astype(str) + ' класс'
-
 fig5 = px.sunburst(
     df_hierarchy,
     path=['Класс', 'Пол', 'Статус'],
-    title='Иерархическая диаграмма: Класс → Пол → Выживаемость',
+    title='Иерархическая диаграмма: класс-пол-выживаемость',
     color='Survived',
-    color_continuous_scale='RdYlGn',
+    color_continuous_scale='Viridis',
     width=800,
     height=600
 )
@@ -144,8 +141,6 @@ fig5.update_layout(title_font_size=18, title_x=0.5)
 st.plotly_chart(fig5, use_container_width=True)
 
 st.header("Интерактивный график")
-st.write("График меняется при выборе фильтров в боковой панели 👈")
-
 with st.sidebar:
     st.header("Фильтры для интерактивного графика")
     
@@ -154,13 +149,11 @@ with st.sidebar:
         options=sorted(df['Pclass'].unique()),
         default=sorted(df['Pclass'].unique())
     )
-    
     пол = st.multiselect(
         "Пол:",
         options=df['Sex'].unique(),
         default=df['Sex'].unique()
     )
-
     возраст_от = st.slider(
         "Возраст от:",
         min_value=int(df['Age'].min()),
