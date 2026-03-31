@@ -81,20 +81,18 @@ fig2.update_layout(
 st.plotly_chart(fig2, use_container_width=True)
 
 # График 3: Древовидная карта - классы
-st.subheader("🗺️ 3. Древовидная карта: Пассажиры по классам")
+# График 3: Гистограмма стоимости билета по классам
+st.subheader("📊 3. Распределение стоимости билета по классам")
 
-treemap_data = df.groupby(['Pclass', 'Survived']).size().reset_index(name='count')
-treemap_data['Survived'] = treemap_data['Survived'].map({0: 'Погиб', 1: 'Выжил'})
-treemap_data['Pclass'] = treemap_data['Pclass'].astype(str) + ' класс'
-
-fig3 = px.treemap(
-    treemap_data,
-    path=['Pclass', 'Survived'],
-    values='count',
-    title='Древовидная карта: Пассажиры по классам и статусу',
-    color='count',
-    color_continuous_scale='Blues',
-    hover_data={'count': True}
+fig3 = px.histogram(
+    df,
+    x='Fare',
+    color='Pclass',
+    nbins=50,
+    title='Распределение стоимости билета по классам',
+    labels={'Fare': 'Стоимость билета ($)', 'count': 'Количество пассажиров', 'Pclass': 'Класс'},
+    barmode='overlay',
+    opacity=0.7
 )
 fig3.update_layout(
     title_font_size=18,
