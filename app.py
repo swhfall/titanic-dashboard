@@ -36,11 +36,9 @@ with col2:
     class_counts = df['Pclass'].value_counts().sort_index()
     for pclass, count in class_counts.items():
         st.write(f"**{pclass} класс:** {count} пассажиров ({count/len(df)*100:.1f}%)")
-
-
 st.header("Визуализация данных")
 
-# График 1: Круговая диаграмма - выживаемость
+# График 1 выживаемость
 st.subheader("1. Выживаемость пассажиров")
 survived_counts = df['Survived'].value_counts()
 fig1 = px.pie(
@@ -51,10 +49,8 @@ fig1 = px.pie(
 )
 st.plotly_chart(fig1, use_container_width=True)
     
-# График 2: Тепловая карта - возраст vs класс
+# График 2 возраст vs класс
 st.subheader("2. Тепловая карта: Возраст по классам")
-
-# Создаем сводную таблицу
 age_pivot = df.pivot_table(
     values='PassengerId', 
     index=pd.cut(df['Age'], bins=10), 
@@ -63,7 +59,6 @@ age_pivot = df.pivot_table(
     fill_value=0
 )
 age_pivot.index = [f"{int(i.left)}-{int(i.right)}" for i in age_pivot.index]
-
 fig2 = px.imshow(
     age_pivot,
     text_auto=True,
@@ -78,14 +73,12 @@ fig2.update_layout(
     height=500
 )
 st.plotly_chart(fig2, use_container_width=True)
-# График 3: Столбчатая диаграмма - выжившие vs погибшие по классам
-st.subheader("3. Выжившие и погибшие по классам")
 
-# Подготавливаем данные
+# График 3 выжившие vs погибшие по классам
+st.subheader("3. Выжившие и погибшие по классам")
 class_survival = df.groupby(['Pclass', 'Survived']).size().reset_index(name='count')
 class_survival['Survived'] = class_survival['Survived'].map({0: 'Погиб', 1: 'Выжил'})
 class_survival['Pclass'] = class_survival['Pclass'].astype(str) + ' класс'
-
 fig3 = px.bar(
     class_survival,
     x='Pclass',
@@ -104,15 +97,11 @@ fig3.update_layout(
 )
 st.plotly_chart(fig3, use_container_width=True)
 
-# График 4: Линейная диаграмма - медианная стоимость билета
-# График 4: Линейная диаграмма - средняя стоимость билета по классам
-st.subheader("📈 4. Линейная диаграмма: Средняя стоимость билета")
-
-# Считаем среднюю стоимость по классам
+# График 4 средняя стоимость билета по классам
+st.subheader("4. Линейная диаграмма: Средняя стоимость билета")
 avg_fare = df.groupby('Pclass')['Fare'].mean().reset_index()
 avg_fare.columns = ['Класс', 'Средняя стоимость']
 avg_fare['Класс'] = avg_fare['Класс'].astype(str) + ' класс'
-
 fig4 = px.line(
     avg_fare,
     x='Класс',
@@ -124,7 +113,7 @@ fig4 = px.line(
 )
 fig4.update_traces(
     marker=dict(size=12, color='#E74C3C'),
-    line=dict(color='#3498DB', width=3)
+    line=dict(color='#e6e6fa', width=3)
 )
 fig4.update_layout(
     title_font_size=18,
@@ -132,24 +121,27 @@ fig4.update_layout(
     yaxis_range=[0, avg_fare['Средняя стоимость'].max() + 20]
 )
 st.plotly_chart(fig4, use_container_width=True)
-st.caption("💡 **Тренд:** Чем выше класс, тем дороже билет. 1 класс в среднем в 10 раз дороже 3 класса.")
-# График 5: Линейчатая диаграмма - выживаемость по полу
-st.subheader("5. Выживаемость по полу")
-gender_survival = df.groupby('Sex')['Survived'].mean() * 100
-gender_survival.index = ['Мужской', 'Женский']
-fig5 = px.bar(
-    x=gender_survival.index,
-    y=gender_survival.values,
-    title='Процент выживших по полу',
-    labels={'x': 'Пол', 'y': 'Выживаемость (%)'},
-    color=gender_survival.index,
-    text=gender_survival.values
-)
-fig5.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-fig5.update_layout(yaxis_range=[0, 100])
-st.plotly_chart(fig5, use_container_width=True)
 
-st.divider()
+
+ge# График 5: Иерархическая диаграмма
+st.subheader("🌞 5. Иерархия: Класс → Пол → Выживаемость")
+
+df_hierarchy = df.copy()
+df_hierarchy['Статус'] = df_hierarchy['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+df_hierarchy['Пол'] = df_hierarchy['Sex'].map({'male': 'Мужской', 'female': 'Женский'})
+df_hierarchy['Класс'] = df_hierarchy['Pclass'].astype(str) + ' класс'
+
+fig5 = px.sunburst(
+    df_hierarchy,
+    path=['Класс', 'Пол', 'Статус'],
+    title='Иерархическая диаграмма: Класс → Пол → Выживаемость',
+    color='Survived',
+    color_continuous_scale='RdYlGn',
+    width=800,
+    height=600
+)
+fig5.update_layout(title_font_size=18, title_x=0.5)
+st.plotly_chart(fig5, use_container_width=True)
 
 st.header("Интерактивный график")
 st.write("График меняется при выборе фильтров в боковой панели 👈")
