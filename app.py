@@ -104,28 +104,33 @@ fig3.update_layout(
 )
 st.plotly_chart(fig3, use_container_width=True)
 
-# График: Пузырьковая диаграмма стоимости
-# График: Распределение стоимости билета по классам
-st.subheader("📊 Распределение стоимости билета по классам")
+# График 4: Линейная диаграмма - медианная стоимость билета
+st.subheader("📈 4. Линейная диаграмма: Медианная стоимость билета")
 
-fig_fare = px.histogram(
-    df,
-    x='Fare',
-    color='Pclass',
-    nbins=50,
-    title='Распределение стоимости билета по классам',
-    labels={'Fare': 'Стоимость билета ($)', 'count': 'Количество пассажиров', 'Pclass': 'Класс'},
-    barmode='overlay',
-    opacity=0.7,
-    color_discrete_sequence=['#E74C3C', '#3498DB', '#2ECC71']
+# Считаем медианную стоимость по классам
+median_fare = df.groupby('Pclass')['Fare'].median().reset_index()
+median_fare.columns = ['Класс', 'Медианная стоимость']
+median_fare['Класс'] = median_fare['Класс'].astype(str) + ' класс'
+
+fig4 = px.line(
+    median_fare,
+    x='Класс',
+    y='Медианная стоимость',
+    title='Медианная стоимость билета по классам',
+    labels={'Медианная стоимость': 'Медианная цена ($)', 'Класс': ''},
+    markers=True,
+    line_shape='spline'
 )
-fig_fare.update_layout(
+fig4.update_traces(
+    marker=dict(size=14, color='#2ECC71', symbol='diamond'),
+    line=dict(color='#2ECC71', width=3, dash='dot')
+)
+fig4.update_layout(
     title_font_size=18,
     title_x=0.5,
-    xaxis_range=[0, 200]  # показываем до 200$, убираем выбросы
+    yaxis_range=[0, median_fare['Медианная стоимость'].max() + 20]
 )
-st.plotly_chart(fig_fare, use_container_width=True)
-st.caption("💡 **Видно, что 1 класс — самые дорогие билеты, 3 класс — самые дешевые.")
+st.plotly_chart(fig4, use_container_width=True)
 # График 5: Линейчатая диаграмма - выживаемость по полу
 st.subheader("5. Выживаемость по полу")
 gender_survival = df.groupby('Sex')['Survived'].mean() * 100
