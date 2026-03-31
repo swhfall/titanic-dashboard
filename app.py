@@ -81,19 +81,26 @@ fig2.update_layout(
 st.plotly_chart(fig2, use_container_width=True)
 
 # График 3: Древовидная карта - классы
-# График 3: Гистограмма стоимости билета по классам
-st.subheader("📊 3. Распределение стоимости билета по классам")
+# График 3: Столбчатая диаграмма - выжившие vs погибшие по классам
+st.subheader("📊 3. Выжившие и погибшие по классам")
 
-fig3 = px.histogram(
-    df,
-    x='Fare',
-    color='Pclass',
-    nbins=50,
-    title='Распределение стоимости билета по классам',
-    labels={'Fare': 'Стоимость билета ($)', 'count': 'Количество пассажиров', 'Pclass': 'Класс'},
-    barmode='overlay',
-    opacity=0.7
+# Подготавливаем данные
+class_survival = df.groupby(['Pclass', 'Survived']).size().reset_index(name='count')
+class_survival['Survived'] = class_survival['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+class_survival['Pclass'] = class_survival['Pclass'].astype(str) + ' класс'
+
+fig3 = px.bar(
+    class_survival,
+    x='Pclass',
+    y='count',
+    color='Survived',
+    title='Количество выживших и погибших по классам',
+    labels={'Pclass': 'Класс каюты', 'count': 'Количество пассажиров', 'Survived': 'Статус'},
+    barmode='group',
+    text='count',
+    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'}
 )
+fig3.update_traces(textposition='outside')
 fig3.update_layout(
     title_font_size=18,
     title_x=0.5
