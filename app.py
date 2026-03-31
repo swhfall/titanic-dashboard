@@ -53,13 +53,36 @@ st.plotly_chart(fig1, use_container_width=True)
     
 
 # График 2: Гистограмма - возраст
-st.subheader("2. Распределение возраста")
-fig2 = px.histogram(
-    df, 
-    x='Age', 
-    nbins=30,
-    title='Распределение возраста пассажиров',
-    labels={'Age': 'Возраст (лет)', 'count': 'Количество'}
+# График 2: Диаграмма с областями - распределение по возрастам
+st.subheader("📊 2. Диаграмма с областями: Возрастные группы")
+
+# Создаем возрастные группы
+df_age = df.dropna(subset=['Age']).copy()
+df_age['Возрастная группа'] = pd.cut(
+    df_age['Age'], 
+    bins=[0, 12, 18, 35, 60, 100],
+    labels=['Дети (0-12)', 'Подростки (13-18)', 'Взрослые (19-35)', 
+            'Средний возраст (36-60)', 'Пожилые (60+)']
+)
+
+# Считаем количество
+age_dist = df_age.groupby(['Возрастная группа', 'Survived']).size().reset_index(name='count')
+age_dist['Survived'] = age_dist['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+
+fig2 = px.area(
+    age_dist,
+    x='Возрастная группа',
+    y='count',
+    color='Survived',
+    title='Распределение пассажиров по возрастным группам',
+    labels={'count': 'Количество пассажиров', 'Возрастная группа': ''},
+    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'},
+    groupnorm='fraction'
+)
+fig2.update_layout(
+    title_font_size=18,
+    title_x=0.5,
+    xaxis_tickangle=-45
 )
 st.plotly_chart(fig2, use_container_width=True)
 
