@@ -51,9 +51,8 @@ fig1 = px.pie(
 )
 st.plotly_chart(fig1, use_container_width=True)
     
-
 # График 2: Тепловая карта - возраст vs класс
-st.subheader("🔥 2. Тепловая карта: Возраст по классам")
+st.subheader("2. Тепловая карта: Возраст по классам")
 
 # Создаем сводную таблицу
 age_pivot = df.pivot_table(
@@ -79,10 +78,8 @@ fig2.update_layout(
     height=500
 )
 st.plotly_chart(fig2, use_container_width=True)
-
-# График 3: Древовидная карта - классы
 # График 3: Столбчатая диаграмма - выжившие vs погибшие по классам
-st.subheader("📊 3. Выжившие и погибшие по классам")
+st.subheader("3. Выжившие и погибшие по классам")
 
 # Подготавливаем данные
 class_survival = df.groupby(['Pclass', 'Survived']).size().reset_index(name='count')
@@ -98,7 +95,7 @@ fig3 = px.bar(
     labels={'Pclass': 'Класс каюты', 'count': 'Количество пассажиров', 'Survived': 'Статус'},
     barmode='group',
     text='count',
-    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'}
+    color_discrete_map={'Погиб': '#42aaff', 'Выжил': '#ffaacc'}
 )
 fig3.update_traces(textposition='outside')
 fig3.update_layout(
@@ -106,16 +103,32 @@ fig3.update_layout(
     title_x=0.5
 )
 st.plotly_chart(fig3, use_container_width=True)
-# График 4: Ящик с усами - стоимость билета
-st.subheader("4. Стоимость билета по классам")
-fig4 = px.box(
-    df,
+
+# График: Пузырьковая диаграмма стоимости
+st.subheader("🫧 Стоимость билета: цена vs класс vs размер семьи")
+
+bubble_fare = df.dropna(subset=['Fare']).copy()
+bubble_fare['Размер семьи'] = bubble_fare['SibSp'] + bubble_fare['Parch'] + 1
+bubble_fare['Статус'] = bubble_fare['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+
+fig_fare = px.scatter(
+    bubble_fare,
     x='Pclass',
     y='Fare',
-    title='Стоимость билета в разных классах',
-    labels={'Pclass': 'Класс', 'Fare': 'Стоимость ($)'}
+    size='Размер семьи',
+    color='Статус',
+    hover_name='Name',
+    title='Стоимость билета: класс, цена и размер семьи',
+    labels={'Pclass': 'Класс каюты', 'Fare': 'Стоимость ($)', 'Размер семьи': 'Размер семьи'},
+    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'},
+    size_max=40,
+    opacity=0.7
 )
-st.plotly_chart(fig4, use_container_width=True)
+fig_fare.update_layout(
+    title_font_size=18,
+    title_x=0.5
+)
+st.plotly_chart(fig_fare, use_container_width=True)
 
 # График 5: Линейчатая диаграмма - выживаемость по полу
 st.subheader("5. Выживаемость по полу")
