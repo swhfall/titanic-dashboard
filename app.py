@@ -81,23 +81,23 @@ fig2.update_layout(
 st.plotly_chart(fig2, use_container_width=True)
 
 # График 3: Скрипичный график - стоимость билета по классам
+# График 3: Скрипичный график - стоимость билета по классам
 st.subheader("🎻 3. Скрипичный график: Стоимость билета по классам")
 
 fig3 = px.violin(
     df,
     x='Pclass',
     y='Fare',
-    color='Pclass',
+    color='Pclass',  
     box=True,
     points='all',
     title='Скрипичный график: Распределение стоимости билета по классам',
-    labels={'Pclass': 'Класс каюты', 'Fare': 'Стоимость билета ($)'},
-    color_continuous_scale='Viridis'
+    labels={'Pclass': 'Класс каюты', 'Fare': 'Стоимость билета ($)'}
 )
 fig3.update_layout(
     title_font_size=18,
     title_x=0.5,
-    showlegend=False
+    showlegend=False  # убираем легенду, так как цвет и так показывает класс
 )
 st.plotly_chart(fig3, use_container_width=True)
 st.caption("💡 **Пояснение:** Ширина показывает плотность распределения. Чем шире, тем больше пассажиров с такой стоимостью билета.")
