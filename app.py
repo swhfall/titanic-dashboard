@@ -105,32 +105,34 @@ fig3.update_layout(
 st.plotly_chart(fig3, use_container_width=True)
 
 # График 4: Линейная диаграмма - медианная стоимость билета
-st.subheader("📈 4. Линейная диаграмма: Медианная стоимость билета")
+# График 4: Линейная диаграмма - средняя стоимость билета по классам
+st.subheader("📈 4. Линейная диаграмма: Средняя стоимость билета")
 
-# Считаем медианную стоимость по классам
-median_fare = df.groupby('Pclass')['Fare'].median().reset_index()
-median_fare.columns = ['Класс', 'Медианная стоимость']
-median_fare['Класс'] = median_fare['Класс'].astype(str) + ' класс'
+# Считаем среднюю стоимость по классам
+avg_fare = df.groupby('Pclass')['Fare'].mean().reset_index()
+avg_fare.columns = ['Класс', 'Средняя стоимость']
+avg_fare['Класс'] = avg_fare['Класс'].astype(str) + ' класс'
 
 fig4 = px.line(
-    median_fare,
+    avg_fare,
     x='Класс',
-    y='Медианная стоимость',
-    title='Медианная стоимость билета по классам',
-    labels={'Медианная стоимость': 'Медианная цена ($)', 'Класс': ''},
+    y='Средняя стоимость',
+    title='Средняя стоимость билета по классам',
+    labels={'Средняя стоимость': 'Средняя цена ($)', 'Класс': ''},
     markers=True,
-    line_shape='spline'
+    line_shape='linear'
 )
 fig4.update_traces(
-    marker=dict(size=14, color='#2ECC71', symbol='diamond'),
-    line=dict(color='#2ECC71', width=3, dash='dot')
+    marker=dict(size=12, color='#E74C3C'),
+    line=dict(color='#3498DB', width=3)
 )
 fig4.update_layout(
     title_font_size=18,
     title_x=0.5,
-    yaxis_range=[0, median_fare['Медианная стоимость'].max() + 20]
+    yaxis_range=[0, avg_fare['Средняя стоимость'].max() + 20]
 )
 st.plotly_chart(fig4, use_container_width=True)
+st.caption("💡 **Тренд:** Чем выше класс, тем дороже билет. 1 класс в среднем в 10 раз дороже 3 класса.")
 # График 5: Линейчатая диаграмма - выживаемость по полу
 st.subheader("5. Выживаемость по полу")
 gender_survival = df.groupby('Sex')['Survived'].mean() * 100
