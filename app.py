@@ -47,7 +47,7 @@ fig1 = px.pie(
     values=survived_counts.values, 
     names=['Погиб', 'Выжил'],
     title='Соотношение выживших и погибших',
-    color_discrete_sequence=['#E74C3C', '#2ECC71']
+    color_discrete_sequence=['#42aaff', '#d3deed']
 )
 st.plotly_chart(fig1, use_container_width=True)
     
