@@ -80,28 +80,22 @@ fig2.update_layout(
 )
 st.plotly_chart(fig2, use_container_width=True)
 
-# График 3: Диаграмма рассеяния - стоимость билета
-st.subheader("🟢 3. Диаграмма рассеяния: Стоимость билета по классам")
+# График 3: Древовидная карта - классы
+st.subheader("🗺️ 3. Древовидная карта: Пассажиры по классам")
 
-import numpy as np
+treemap_data = df.groupby(['Pclass', 'Survived']).size().reset_index(name='count')
+treemap_data['Survived'] = treemap_data['Survived'].map({0: 'Погиб', 1: 'Выжил'})
+treemap_data['Pclass'] = treemap_data['Pclass'].astype(str) + ' класс'
 
-# Добавляем небольшой шум для наглядности
-df_scatter = df.copy()
-df_scatter['Pclass_jitter'] = df_scatter['Pclass'] + np.random.normal(0, 0.08, len(df_scatter))
-df_scatter['Статус'] = df_scatter['Survived'].map({0: 'Погиб', 1: 'Выжил'})
-
-fig3 = px.scatter(
-    df_scatter,
-    x='Pclass_jitter',
-    y='Fare',
-    color='Статус',
-    title='Диаграмма рассеяния: Стоимость билета по классам',
-    labels={'Pclass_jitter': 'Класс каюты', 'Fare': 'Стоимость билета ($)', 'Статус': 'Статус'},
-    color_discrete_map={'Погиб': '#E74C3C', 'Выжил': '#2ECC71'},
-    opacity=0.6,
-    hover_data=['Name']
+fig3 = px.treemap(
+    treemap_data,
+    path=['Pclass', 'Survived'],
+    values='count',
+    title='Древовидная карта: Пассажиры по классам и статусу',
+    color='count',
+    color_continuous_scale='Blues',
+    hover_data={'count': True}
 )
-fig3.update_xaxes(tickvals=[1, 2, 3], ticktext=['1 класс', '2 класс', '3 класс'])
 fig3.update_layout(
     title_font_size=18,
     title_x=0.5
