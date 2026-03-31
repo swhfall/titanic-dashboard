@@ -112,7 +112,7 @@ fig4 = px.line(
     line_shape='linear'
 )
 fig4.update_traces(
-    marker=dict(size=12, color='#E74C3C'),
+    marker=dict(size=12, color='#42aaff'),
     line=dict(color='#e6e6fa', width=3)
 )
 fig4.update_layout(
@@ -123,7 +123,7 @@ fig4.update_layout(
 st.plotly_chart(fig4, use_container_width=True)
 
 
-ge# График 5: Иерархическая диаграмма
+# График 5: Иерархическая диаграмма
 st.subheader("🌞 5. Иерархия: Класс → Пол → Выживаемость")
 
 df_hierarchy = df.copy()
