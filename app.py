@@ -36,6 +36,12 @@ with col2:
     class_counts = df['Pclass'].value_counts().sort_index()
     for pclass, count in class_counts.items():
         st.write(f"**{pclass} класс:** {count} пассажиров ({count/len(df)*100:.1f}%)")
+st.header("просмотр данных")
+n = st.slider("выберите кол-во строк для отображения", min_value=5, max_value=50, value=10, step=5)
+st.dataframe(df.head(n), use_container_width=True)
+st.divider()
+
+
 st.header("Визуализация данных")
 
 # График 1 выживаемость
