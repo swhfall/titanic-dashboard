@@ -12,14 +12,13 @@ df = load_data()
 st.header("1. Описательная статистика")
 col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Информация о датасете")
     column_info = pd.DataFrame({
         'Колонка': df.columns,
         'Тип данных': [str(dtype) for dtype in df.dtypes.values],
     })
     format_row = pd.DataFrame({
-        'Колонка': ['**Формат таблицы**'],
-        'Тип данных': [f'**{df.shape[0]} строк × {df.shape[1]} столбцов**']
+        'Колонка': ['Формат таблицы'],
+        'Тип данных': [f'{df.shape[0]} строк × {df.shape[1]} столбцов']
     })
     final_info = pd.concat([format_row, column_info], ignore_index=True)
     st.dataframe(final_info, use_container_width=True, hide_index=True)
