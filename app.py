@@ -12,28 +12,17 @@ df = load_data()
 st.header("1. Описательная статистика")
 col1, col2 = st.columns(2)
 with col1:
-    st.subheader("Информация о колонках")
+    st.subheader("Информация о датасете")
     column_info = pd.DataFrame({
         'Колонка': df.columns,
         'Тип данных': [str(dtype) for dtype in df.dtypes.values],
-        'Пропуски': df.isnull().sum().values,
-        '% пропусков': (df.isnull().sum() / len(df) * 100).round(1).values,
-        'Уникальных значений': df.nunique().values
     })
-    st.dataframe(column_info, use_container_width=True, hide_index=True)
-with col2:
-    st.subheader("Общая информация о датасете")
-    st.write(f"**Форма таблицы:** {df.shape[0]} строк × {df.shape[1]} столбцов")
-    st.write(f"**Всего пассажиров:** {len(df)}")
-    st.write(f"**Выживших:** {df['Survived'].sum()} ({df['Survived'].mean()*100:.1f}%)")
-    st.write(f"**Погибших:** {len(df) - df['Survived'].sum()} ({(1 - df['Survived'].mean())*100:.1f}%)")
-    st.write(f"**Средний возраст:** {df['Age'].mean():.1f} лет")
-    st.write(f"**Медианный возраст:** {df['Age'].median():.1f} лет")
-    st.write(f"**Средняя стоимость билета:** ${df['Fare'].mean():.2f}")
-    st.subheader("Распределение по классам")
-    class_counts = df['Pclass'].value_counts().sort_index()
-    for pclass, count in class_counts.items():
-        st.write(f"**{pclass} класс:** {count} пассажиров ({count/len(df)*100:.1f}%)")
+    format_row = pd.DataFrame({
+        'Колонка': ['**Формат таблицы**'],
+        'Тип данных': [f'**{df.shape[0]} строк × {df.shape[1]} столбцов**']
+    })
+    final_info = pd.concat([format_row, column_info], ignore_index=True)
+    st.dataframe(final_info, use_container_width=True, hide_index=True)
 st.header("просмотр данных")
 n = st.slider("выберите кол-во строк для отображения", min_value=5, max_value=50, value=10, step=5)
 st.dataframe(df.head(n), use_container_width=True)
