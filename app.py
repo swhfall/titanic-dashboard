@@ -1,11 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import matplotlib.pyplot as plt
-import seaborn as sns
 st.set_page_config(page_title="Титаник дашборд", layout="wide") 
 st.title("анализ данных по титанику")
-@st.cache_data
+@st.cache_data  #декоратор для кэша
 def load_data():
     df = pd.read_csv("titanic.csv")
     return df
@@ -40,8 +38,6 @@ st.header("просмотр данных")
 n = st.slider("выберите кол-во строк для отображения", min_value=5, max_value=50, value=10, step=5)
 st.dataframe(df.head(n), use_container_width=True)
 st.divider()
-
-
 st.header("Визуализация данных")
 
 # График 1 выживаемость
